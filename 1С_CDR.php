@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------
 // ООО "МИКО" // 2014-03-18 
-// v.4.5 // 1С_CDR // 10000555 
+// v.4.7 // 1С_CDR // 10000555 
 // Передача истории звоноков в 1С 
 -------------------------------------------------------
 Скрипт протестирован на Askozia v3:
@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS "'.$name_tmp_cdr.'";
 CREATE TABLE "'.$name_tmp_cdr.'"	( "answer" TEXT, "src" TEXT, "dst" TEXT, "channel" TEXT, "dstchannel"  TEXT, "billsec" TEXT, "disposition" TEXT, "uniqueid" TEXT, "lastapp" TEXT, "linkedid" TEXT,"recordingfile" TEXT, "lastdata" TEXT);
 INSERT INTO "'.$name_tmp_cdr.'" ( "answer", "billsec", "channel", "disposition", "dst", "dstchannel", "lastapp", "linkedid", "recordingfile", "src", "uniqueid","lastdata") 
 SELECT
-	"answer", 
+	"start", 
 	"billsec", 
 	"channel", 
 	"disposition",
@@ -61,7 +61,7 @@ SELECT
 	"src",
 	"uniqueid",
 	"lastdata"
-FROM "cdr" WHERE answer BETWEEN "'.$date1.'" AND "'.$date2.'";
+FROM "cdr" WHERE "cdr"."start" BETWEEN "'.$date1.'" AND "'.$date2.'";
 DROP TABLE IF EXISTS "'.$name_tmp_cel.'";
 CREATE TABLE "'.$name_tmp_cel.'"	( "eventtime" TEXT, "eventtype" TEXT, "uniqueid" TEXT, "peer" TEXT,"linkedid"  TEXT );
 INSERT INTO "'.$name_tmp_cel.'" ("eventtime","eventtype","linkedid","peer","uniqueid") SELECT
@@ -157,4 +157,5 @@ $agi->exec("NoCDR", "");
 // ответить должны лишь после выполнения всех действий
 // если не ответим, то оргининация вернет ошибку 
 $agi->answer(); 
+unlink($temp);
 ?>​
