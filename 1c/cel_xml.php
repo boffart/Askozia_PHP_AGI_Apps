@@ -1,25 +1,25 @@
 #!/usr/bin/php
 <?php 
 /*-----------------------------------------------------
-// ООО "МИКО" // 2013-10-30 
-// v.3.2 // CEL - синхронизация 
-// Получение настроек с сервера Asterisk
+// РћРћРћ "РњРРљРћ" // 2014-01-02 
+// v.3.4 // CEL - СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ 
+// РџРѕР»СѓС‡РµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє СЃ СЃРµСЂРІРµСЂР° Asterisk
 -------------------------------------------------------
-// Скрипт протестирован на Askozia v2:
+// РЎРєСЂРёРїС‚ РїСЂРѕС‚РµСЃС‚РёСЂРѕРІР°РЅ РЅР° Askozia v2:
 //   PHP v.4.4.9
-// местоположение файла
+// РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ С„Р°Р№Р»Р°
 //   /offload/rootfs/usr/www/cfe/wallboard/1c/cel.php
-// пример вызова скрипта:
-//   http://HOST:23600/cfe/wallboard/1c/cel.php?limit=XXX&offset=YYY  
+// РїСЂРёРјРµСЂ РІС‹Р·РѕРІР° СЃРєСЂРёРїС‚Р°:
+//   http://HOST:23600/cfe/wallboard/1c/cel_xml.php?limit=XXX&offset=YYY  
 // 
-//	 HOST - адрес сервера АТС.
-//	 ХХХ  - количество пакетов (должно быть меньше 500)
-//	 YYY  - смещение выборки.
+//	 HOST - Р°РґСЂРµСЃ СЃРµСЂРІРµСЂР° РђРўРЎ.
+//	 РҐРҐРҐ  - РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°РєРµС‚РѕРІ (РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ 500)
+//	 YYY  - СЃРјРµС‰РµРЅРёРµ РІС‹Р±РѕСЂРєРё.
 -------------------------------------------------------*/
 require("guiconfig.inc");
-// Количество записей
+// РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РїРёСЃРµР№
 $limit  =  $_GET['limit'];
-// Смещение для выборки следующих пакетов  
+// РЎРјРµС‰РµРЅРёРµ РґР»СЏ РІС‹Р±РѕСЂРєРё СЃР»РµРґСѓСЋС‰РёС… РїР°РєРµС‚РѕРІ  
 $offset =  $_GET['offset']; 
 
 if ((ctype_digit($limit)) && (ctype_digit($offset))) {
@@ -27,11 +27,11 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 		echo ("<pre>The variable 'limit' should be less than 500</pre>");
 	}else {
 		$disk = storage_service_is_active("astlogs");
-		$astlogdir = $disk['mountpoint'] . "/askoziapbx/astlogs/asterisk/master.db";
+		$astdb = $disk['mountpoint'] . "/askoziapbx/astlogs/asterisk/master.db";
 		
 		$output 	= array();
 		$tmp_str=exec("sqlite3  -separator '@.@' -line " .  $astdb . " 'select * from cel limit " . $limit . " offset " . $offset ."'",$output);
-		// разбор и упаковка в xml
+		// СЂР°Р·Р±РѕСЂ Рё СѓРїР°РєРѕРІРєР° РІ xml
 		$xml_output = "<?xml version=\"1.0\"?>\n"; 
 		$xml_output.= "<cel-table>\n"; 
 		
@@ -39,12 +39,12 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 		foreach($output as $field){
 			$stuct = trim($field);
 			if($stuct == ""){
-				// конец строки
+				// РєРѕРЅРµС† СЃС‚СЂРѕРєРё
 				$xml_output.= "<cel-row $atributs />\n"; 
-				// обнуляем буфер
+				// РѕР±РЅСѓР»СЏРµРј Р±СѓС„РµСЂ
 				$atributs = "";
 			}else{
-				// очередное поле строки
+				// РѕС‡РµСЂРµРґРЅРѕРµ РїРѕР»Рµ СЃС‚СЂРѕРєРё
 				$arr_key_val = explode('=',$stuct);
 				if(count($arr_key_val)==2){
 					$key = trim($arr_key_val[0]);
@@ -52,11 +52,11 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 					// print_r("key = $key; val=$val\n");
 					$atributs.=$key."=\"".$val."\" ";
 				}
-			}// проверка условия
+			}// РїСЂРѕРІРµСЂРєР° СѓСЃР»РѕРІРёСЏ
 		}
 		if($atributs != ""){
 			$xml_output.= "<cel-row $atributs />\n"; 
-			// обнуляем буфер
+			// РѕР±РЅСѓР»СЏРµРј Р±СѓС„РµСЂ
 			$atributs = "";
 		}
 		$xml_output .= "</cel-table>"; 
@@ -65,5 +65,4 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 }else{
 	echo ("<pre>Variable 'limit' and 'offset' must be numeric.</pre>");
 }
-
 ?>
