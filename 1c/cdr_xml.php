@@ -1,8 +1,8 @@
 #!/usr/bin/php
 <?php 
 /*-----------------------------------------------------
-// ООО "МИКО" // 2013-10-30 
-// v.3.2 // CDR - синхронизация
+// ООО "МИКО" // 2014-01-02 
+// v.3.3 // CDR - синхронизация
 // Получение настроек с сервера Asterisk
 -------------------------------------------------------
 // Скрипт протестирован на Askozia v2:
@@ -10,7 +10,7 @@
 // местоположение файла
 //   /offload/rootfs/usr/www/cfe/wallboard/1c/cdr.php
 // пример вызова скрипта:
-//   http://HOST:23600/cfe/wallboard/1c/cdr.php?limit=XXX&offset=YYY 
+//   http://HOST:23600/cfe/wallboard/1c/cdr_xml.php?limit=XXX&offset=YYY 
 // 
 //	 HOST - адрес сервера АТС.
 //	 ХХХ  - количество пакетов (должно быть меньше 500)
@@ -27,7 +27,7 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 		echo ("<pre>The variable 'limit' should be less than 500</pre>");
 	}else {
 		$disk = storage_service_is_active("astlogs");
-		$astlogdir = $disk['mountpoint']."/askoziapbx/astlogs/asterisk/master.db";
+		$astdb = $disk['mountpoint']."/askoziapbx/astlogs/asterisk/master.db";
 		
 		$output 	= array();
 		$tmp_str=exec("sqlite3  -separator '@.@' -line " .  $astdb . " 'select * from cdr limit " . $limit . " offset " . $offset ."'",$output);
@@ -65,5 +65,4 @@ if ((ctype_digit($limit)) && (ctype_digit($offset))) {
 }else {
 	echo ("<pre>Variable 'limit' and 'offset' must be numeric.</pre>");
 }
-
 ?>
