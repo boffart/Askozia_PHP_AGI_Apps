@@ -1,0 +1,8 @@
+1,ExecIf($["${EXTEN}" = "h"]?Hangup())
+n,Set(RecFile=${STRFTIME(${EPOCH},,%Y-%m/%d)}/in_${CDR(src)}_${STRFTIME(${EPOCH},,%Y-%m-%d-%H-%M-%S)})
+n,Monitor(gsm,${RecFile},bm)
+n,Set(DB(MIKOTMP/${CDR(linkedid)})=${RecFile})
+n,Dial(LOCAL/${interception}@internal/n,${ChanTimeOut},tT)
+n,ExecIf($["${DIALSTATUS}" = "ANSWER"]?Hangup())
+n,Dial(LOCAL/${RedirectNumber}@internal/n,600,tT)
+n,Hangup()​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​

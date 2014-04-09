@@ -1,0 +1,4 @@
+1,ExecIf($["${EXTEN}" = "h"]?Hangup())
+n,Answer(0)
+n,SIPAddHeader(Call-Info:\;answer-after=0)
+n,Dial(${AutoAnswerChan},20,tT)​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
