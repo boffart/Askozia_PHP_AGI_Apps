@@ -1,10 +1,10 @@
 <?php
 /*-----------------------------------------------------
-// ООО "МИКО" // 2013-10-30 
-// v.3.2 // 1С_Playback // 10000777 
+// ООО "МИКО" // 2014-07-17 
+// v.3.4 // 1С_Playback // 10000777 
 // Поиск имени файла записи для воспроизведения в 1С 
 -------------------------------------------------------
-Скрипт протестирован на Askozia v2:
+Скрипт протестирован на Askozia v3.2:
 Asterisk 1.8.4.4
 PHP 4.4.9
 sqlite3 -version 3.7.0
@@ -38,20 +38,23 @@ if($EXTEN == "h"){
   
  
   // форируем и выполняем запрос
-		 	 
-  $zapros =  "SELECT 
-    				recordingfile 
-			  FROM cdr 
-			  WHERE recordingfile!='' 
-				    AND uniqueid LIKE '$uniqueid1c%' 
-			  LIMIT 1";     
-		 	 
-  $var_path = rtrim(exec("sqlite3 $cdr_db \"$zapros\""));
-  
-  // получим путь к медиа файлам
-  $diskmedia = storage_service_is_active("media");
-  $recordingfile = $diskmedia['mountpoint']."/askoziapbx/voicemailarchive/monitor/$var_path";
-  $agi->verbose("'$cdr_db'", 3);
+        
+  $zapros ="SELECT 
+            	recordingfile 
+			FROM cdr 
+			WHERE recordingfile!='' 
+            	AND uniqueid LIKE '$uniqueid1c%' 
+			LIMIT 1";     
+        
+  $var_path = rtrim(exec("sqlite3 $cdr_db \"$zapros\""));  
+
+  if(is_file($var_path)){
+    $recordingfile = $var_path;
+  }else{
+    // получим путь к медиа файлам
+    $diskmedia = storage_service_is_active("media");
+    $recordingfile = $diskmedia['mountpoint']."/askoziapbx/voicemailarchive/monitor/$var_path";
+  }
   
   if(is_file($recordingfile)) {
     $response = "CallRecord,Channel:$chan,FileName:$recordingfile";
