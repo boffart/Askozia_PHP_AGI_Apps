@@ -2,9 +2,9 @@
 <?php 
 /*-----------------------------------------------------
 // ООО "МИКО" // 2014-04-10 
-// v.2.8 // Загрузка факсов / записей разговоров с сервереа Askozia на клиента
+// v.2.9 // Загрузка факсов / записей разговоров с сервереа Askozia на клиента
 -------------------------------------------------------
-Askozia 2.2.8 / 3.0.2
+Askozia 2.2.8 / 3.0.2 / 3.2
 PHP 4.4.9
 SoX v14.3.2
 -------------------------------------------------------*/
@@ -18,6 +18,7 @@ $recdir = $disk['mountpoint'] . "/askoziapbx/voicemailarchive/monitor/";
 if ($_GET['view']){
 	
 	$filename = str_replace(' ', '+', $_GET['view']);
+	
 	if ($_GET['type']=="FAX") 
 	{
 		$base_name = basename(basename($filename,'.tif'),'.pdf').'.pdf';
@@ -30,11 +31,23 @@ if ($_GET['view']){
 		}else{
 			echo '<b>404 File not found!</b>';
 		}
-	}elseif ($_GET['type']=="Records" && file_exists($recdir.$filename) ) 
+	}elseif ($_GET['type']=="Records") 
 	{
-		
 		$wavfile = $tmpdir. basename($filename) . '.wav';
-		system('sox ' . $recdir . $filename . ' -r 8000 -a ' . $wavfile . ' > /dev/null 2>&1');
+		
+	    if(is_file($filename)){
+	      $recordingfile = $filename;
+	    }else{
+	      // получим путь к медиа файлам
+	      $recordingfile = $recdir.$filename;
+	    }
+
+		$extension = strtolower(substr(strrchr($wavfile,"."),1));
+		if($extension == "wav"){
+			system('cp '.$recordingfile.' '.$wavfile.' > /dev/null 2>&1');
+		}else{
+			system('sox '.$recordingfile.' -r 8000 -a '.$wavfile.' > /dev/null 2>&1');
+		}
 
 		if (file_exists($wavfile)) {
 			
@@ -47,8 +60,6 @@ if ($_GET['view']){
 		    switch( $extension ) {
 		      case "mp3": $ctype="audio/mpeg"; break;
 		      case "wav": $ctype="audio/x-wav"; break;
-		      case "Wav": $ctype="audio/x-wav"; break;
-		      case "WAV": $ctype="audio/x-wav"; break;
 		      case "gsm": $ctype="audio/x-gsm"; break;
 		      // not downloadable
 		      default: die("<b>404 File not found!</b>"); break ;
