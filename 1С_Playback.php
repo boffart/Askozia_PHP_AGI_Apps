@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------
-// ООО "МИКО" // 2014-07-17 
-// v.3.4 // 1С_Playback // 10000777 
+// ООО "МИКО" // 2014-08-25 
+// v.3.5 // 1С_Playback // 10000777 
 // Поиск имени файла записи для воспроизведения в 1С 
 -------------------------------------------------------
 Скрипт протестирован на Askozia v3.2:
@@ -38,13 +38,12 @@ if($EXTEN == "h"){
   
  
   // форируем и выполняем запрос
-        
+  // select MAX(recordingfile) from cdr where recordingfile!='' AND linkedid like '$uniqueid1c%' GROUP BY linkedid     
   $zapros ="SELECT 
-            	recordingfile 
-			FROM cdr 
-			WHERE recordingfile!='' 
-            	AND uniqueid LIKE '$uniqueid1c%' 
-			LIMIT 1";     
+  				MAX(recordingfile) 
+  			FROM cdr 
+  			WHERE recordingfile!='' AND linkedid LIKE '$uniqueid1c%' 
+  			GROUP BY linkedid";     
         
   $var_path = rtrim(exec("sqlite3 $cdr_db \"$zapros\""));  
 

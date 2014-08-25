@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------
-// ООО "МИКО" // 2013-10-31
-// v.3.3 // 1C_Download // 10000666
+// ООО "МИКО" // 2014-08-25
+// v.3.4 // 1C_Download // 10000666
 // Загрузка факсов / записей разговоров на клиента
 -------------------------------------------------------
 Скрипт протестирован на Askozia v2:
@@ -41,15 +41,16 @@ if($EXTEN == "h"){
   if(strlen($faxrecfile) <= 4 && strlen($uniqueid1c) >= 4){
     // 1.Формируем запрос
     $disk = storage_service_is_active("astlogs");
-	// проверим, есть ли временная база
-	// если есть, то запросы к ней
-	$cdr_db = $disk['mountpoint']."/askoziapbx/astlogs/asterisk/master.db";
-    $zapros =  "SELECT 
-    				recordingfile 
-				FROM cdr 
-				WHERE recordingfile!='' 
-				      AND uniqueid LIKE '$uniqueid1c%' 
-				LIMIT 1";     
+  // проверим, есть ли временная база
+  // если есть, то запросы к ней
+  $cdr_db = $disk['mountpoint']."/askoziapbx/astlogs/asterisk/master.db";
+    
+  $zapros ="SELECT 
+          MAX(recordingfile) 
+        FROM cdr 
+        WHERE recordingfile!='' AND linkedid LIKE '$uniqueid1c%' 
+        GROUP BY linkedid";     
+
     // 2. Выполняем запрос
     $faxrecfile = rtrim(exec("sqlite3 $cdr_db \"$zapros\""));
   }
