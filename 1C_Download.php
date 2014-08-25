@@ -46,10 +46,10 @@ if($EXTEN == "h"){
   $cdr_db = $disk['mountpoint']."/askoziapbx/astlogs/asterisk/master.db";
     
   $zapros ="SELECT 
-          MAX(recordingfile) 
-        FROM cdr 
-        WHERE recordingfile!='' AND linkedid LIKE '$uniqueid1c%' 
-        GROUP BY linkedid";     
+          		MAX(recordingfile) 
+		  	FROM cdr 
+		  	WHERE recordingfile!='' AND linkedid LIKE '$uniqueid1c%' 
+		  	GROUP BY linkedid";     
 
     // 2. Выполняем запрос
     $faxrecfile = rtrim(exec("sqlite3 $cdr_db \"$zapros\""));
