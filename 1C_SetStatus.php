@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------
 // ООО "МИКО" // 2014-04-10 
-// v.1.7 // 1С_Set_Status // 10000222 
+// v.1.8 // 1С_Set_Status // 10000222 
 // Передача статусов пользователей
 -------------------------------------------------------
 Скрипт протестирован на Askozia v2.2.8 / 3.0.2:
@@ -79,14 +79,14 @@ if($dbFamily!='CF'&&$dbFamily!='UserBuddyStatus'&&$dbFamily!='DND'){
       // если необходимо отправляем данные порциями
       if($ch == 20){
           // отправляем данные в 1С, обнуляем буфер
-          $agi->exec("UserEvent", "From$dbFamily,Channel:$chan,Date:$date1,Lines:$result");
+          $agi->exec("UserEvent", "From$dbFamily,Channel:$chan,Lines:$result");
           $result = ""; $ch = 1;
       }
       $ch = $ch + 1;
   }    
   // проверяем, есть ли остаток данных для отправки
   if(!$result == ""){
-      $agi->exec("UserEvent", "From$dbFamily,Channel:$chan,Date:$date1,Lines:$result");
+      $agi->exec("UserEvent", "From$dbFamily,Channel:$chan,Lines:$result");
   }  
 }else{
   // ошибка при установке параметров скрипта

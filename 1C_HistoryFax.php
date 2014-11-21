@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------
-// ООО "МИКО" // 2013-10-31 
-// v.3.3 // 1C_HistoryFax // 10000444
+// ООО "МИКО" // 2014-11-20 
+// v.3.4 // 1C_HistoryFax // 10000444
 // Получение истории факсимильных сообщений
 -------------------------------------------------------
 Скрипт протестирован на Askozia v2:
@@ -44,16 +44,16 @@ SELECT
      a.answer,
      a.src,a.dst,
      a.lastdata,
-     a.uniqueid,
+     a.linkedid,
      a.lastapp,     
-a.userfield,
+     a.recordingfile,
      a.InternalCalleridNum 
      
 FROM 
      (SELECT * 
       FROM cdr 
       where answer BETWEEN \"$date1\" AND \"$date2\") AS a 
-WHERE a.userfield!=\"\" 
+WHERE a.recordingfile!=\"\" 
       AND (a.InternalCalleridNum=\"FAXin\" 
            OR a.InternalCalleridNum=\"FAXout\")";
 
@@ -92,4 +92,4 @@ $agi->exec("NoCDR", "");
 // ответить должны лишь после выполнения всех действий
 // если не ответим, то оргининация вернет ошибку 
 $agi->answer(); 
-?>​
+?>
